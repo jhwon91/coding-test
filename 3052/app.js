@@ -1,25 +1,14 @@
 const fs = require('fs');
 const filePath = process.platform === 'linux' ? '/dev/stdin' : './input.txt';
-const input = fs.readFileSync(filePath).toString().split('\n');
+const input = fs.readFileSync(filePath).toString().trim().split('\n');
 
-let testCase = [];
-const inputC = input.map((item) => {	
-	if( 0 <= Number(item) && Number(item) <= 100 ) {
-		testCase.push(+item)
+let incluedsArr = [];
+input.forEach((item) => {
+
+	const index = item % 42;
+
+	if(incluedsArr.indexOf(index) === -1){
+		incluedsArr.push(index)
 	}
 });
-
-solution(testCase);
-
-function solution(input){
-	
-	const arr = input.map((item)=> item%42);
-	let incluedsArr = [];
-	arr.forEach((item) => {
-		if(!incluedsArr.includes(item)){
-			incluedsArr.push(item)
-		}
-	});
-	
-	console.log(incluedsArr.length);
-}
+console.log(incluedsArr.length);
