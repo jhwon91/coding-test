@@ -1,17 +1,16 @@
 /**
  * 1. 아이디어
- *  - 2중 For => 값 1 && 방문 x => DFS
- * 	- DFS를 통해 찾은 값을 저장 후 정렬 해서 출력
+ *  - 배열의 n번째 인데스 요소가 n번 정점과  연결된 장점들로 이루어진 배열이
+ *    되도록 그래프 배열 생성
+ *    
  * 
  * 2. 시간 복잡도
- *  - DFS : O(V+E)
- *  - V : N^2
- *  - E : 4N^2
- *  - V + E : 5N^2 ~= N^2 ~= 625 >> 가능
+ *  - DFS, BFS :  O(V+E)
+ *  - 1,000 + 10,000 > 가능
  * 
  * 3. 자료구조
- *  - 그래프 전체 지도 : int[][]
- *  - 방문 : bool[][]
+ *  - 그래프 : int[][]
+ *  - 방문 : bool[]
  *  - 결과값 : int[]
  * 
  */
@@ -23,50 +22,62 @@ let input = fs
 							.toString()
 							.split('\n');
 
-const n = input.shift();	
-input = input.map((item) => item.split('').map((value) => +value));;
+const [N, M, V] = input.shift().split(" ").map((v) => +v);	
+let result = [];
+let chk = [];
+let graph = Array.from({length: N +1 },() => []);
 
-let result = [];	
-let each = 0;	
+const initArray = () => {
+	chk = Array.from({length: N +1 },() => false);
+	result = [];
+}
 
-console.log(n)
-console.log(input)
+//간 노드 인접 행렬
+for (let i = 0; i < M ; i++) {
+	let [from, to] = input.shift().split(" ").map((v) => +v);	
+	graph[from].push(to);
+	graph[to].push(from);
+}
 
-let chk = Array.from({length: n},() => 
-	Array.from({length:n},() => false)
-);
+graph.forEach((datas) => {
+	datas.sort((a,b) => a - b);
+})
 
-const dy = [0, 1, 0, -1];
-const dx = [1, 0, -1, 0];
+const DFS = (V) => {
+	if (chk[V] === true) return;
+	chk[V] = true;
+	result.push(V);
+	for(let i = 0 ; i < graph[V].length; i++){
+		let next = graph[V][i];
+		if(chk[next] === false) {
+			DFS(next)
+		}
+	}	
+}
 
-const DFS = (i,j) => {
-	each++;
-	for(let k = 0 ; k < 4 ; k++) {
-		const ny = i + dy[k];
-		const nx = j + dx[k];
+const BFS = (V) =>{
+	let queue = [V];
 
-		if (0 <= ny && ny < n && 0 <= nx && nx < n) {
-			if (input[ny][nx] === 1 && !chk[ny][nx]) {
-				chk[ny][nx] = true;
-				DFS(ny,nx)
+	while (queue.length)	{
+		let x = queue.shift();
+		if (chk[x] === true) continue;
+		chk[x] = true;
+		result.push(x);
+		for(let i = 0; i < graph[x].length ; i++) {
+			let next = graph[x][i];
+			if (chk[next] === false) {
+				queue.push(next);
 			}
 		}
 	}
-};
+}
 
-for (let i = 0 ; i < n ; i++) {
-	for (let j = 0; j < n ; j++) {
-		if (input[i][j] === 1 && !chk[i][j]) {
-			chk[i][j] =  true; 
-			each = 0;
-			DFS(i,j);
-			result.push(each);
-		}
-	}
-};
+initArray();
+DFS(V);
+console.log(result.join(' '));
+initArray();
+BFS(V);
+console.log(result.join(' '))
 
-result.sort((a,b) => a-b);
-const answer = [result.length, ...result];
-console.log(answer.join('\n'));
 
 
