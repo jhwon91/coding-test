@@ -1,83 +1,56 @@
 /**
- * 1. 아이디어
- *  - 배열의 n번째 인데스 요소가 n번 정점과  연결된 장점들로 이루어진 배열이
- *    되도록 그래프 배열 생성
- *    
+ * 1 3 5 7 9 20 31 42 53 64
  * 
- * 2. 시간 복잡도
- *  - DFS, BFS :  O(V+E)
- *  - 1,000 + 10,000 > 가능
+ * d(1) =  2
+ * d(2) = 4
+ * d(3) = 6
+ * 4= 8
+ * 5 = 10
+ * 6 = 12
+ * 7 = 14
+ * 8 = 16
+ * 9 = 18
+ * 10 = 11
+ * 12 = 15
+ * 13 = 17
+ * 14 = 19
+ * 15 = 
  * 
- * 3. 자료구조
- *  - 그래프 : int[][]
- *  - 방문 : bool[]
- *  - 결과값 : int[]
  * 
+ * 
+ * 1. che array 만듦
+ * 1 ~ N 까지 함수에 넣으면서 결과과 값 만환
+ * chk array에 true로 체크
  */
 
-const fs = require('fs');
-const filePath = process.platform === 'linux' ? '/dev/stdin' : './input.txt';
-let input = fs
-							.readFileSync(filePath)
-							.toString()
-							.split('\n');
+const sequence = (value) => {
+	
+	let chk = Array.from({length: value +1},() => false);
 
-const [N, M, V] = input.shift().split(" ").map((v) => +v);	
-let result = [];
-let chk = [];
-let graph = Array.from({length: N +1 },() => []);
+	for(let i = 1; i <= value ; i++){
+		chk[funD(i)] = true;
+	};
 
-const initArray = () => {
-	chk = Array.from({length: N +1 },() => false);
-	result = [];
-}
-
-//간 노드 인접 행렬
-for (let i = 0; i < M ; i++) {
-	let [from, to] = input.shift().split(" ").map((v) => +v);	
-	graph[from].push(to);
-	graph[to].push(from);
-}
-
-graph.forEach((datas) => {
-	datas.sort((a,b) => a - b);
-})
-
-const DFS = (V) => {
-	if (chk[V] === true) return;
-	chk[V] = true;
-	result.push(V);
-	for(let i = 0 ; i < graph[V].length; i++){
-		let next = graph[V][i];
-		if(chk[next] === false) {
-			DFS(next)
-		}
-	}	
-}
-
-const BFS = (V) =>{
-	let queue = [V];
-
-	while (queue.length)	{
-		let x = queue.shift();
-		if (chk[x] === true) continue;
-		chk[x] = true;
-		result.push(x);
-		for(let i = 0; i < graph[x].length ; i++) {
-			let next = graph[x][i];
-			if (chk[next] === false) {
-				queue.push(next);
-			}
-		}
+	for(let i = 1 ; i <= value; i++){
+		if(!chk[i]){console.log(i)};
 	}
 }
 
-initArray();
-DFS(V);
-console.log(result.join(' '));
-initArray();
-BFS(V);
-console.log(result.join(' '))
+const funD = (x) => {
+	let result = 0;
+	let resultSub = [];
 
+	if (String(x).length > 1){
+		resultSub = String(x).split('').map((v) => +v)
+		for(let i = 0; i < resultSub.length; i++){
+			result += resultSub[i]
+		}
+		result += x;
+	} else {
+		result = x + x;
+	}
 
+	return result; 
+}
 
+sequence(10000);
