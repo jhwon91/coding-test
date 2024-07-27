@@ -10,9 +10,6 @@ def solution(clothes):
             temp_dict[key] = [value]
 
     for key in temp_dict.keys():
-        if len(temp_dict) == 1 :
-            return len(temp_dict[key])
-        else:
             answer *= len(temp_dict[key]) + 1
     
     return answer-1
