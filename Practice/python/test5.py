@@ -1,33 +1,48 @@
-def dfs(x, y):
-    visited[x][y] = True
-    count = 1
-    
-    dx = [-1, 1, 0, 0]
-    dy = [0, 0, -1, 1]
-    
-    for i in range(4):
-        nx = x + dx[i]
-        ny = y + dy[i]
-        
-        if 0 <= nx < N and 0 <= ny < N and not visited[nx][ny] and grid[nx][ny] == 1:
-            count += dfs(nx, ny)
-    
-    return count
+import sys
 
-N = int(input())
-grid = [list(map(int, input())) for _ in range(N)]
+INF = float('inf')
+results = []
+T = int(input())
 
-visited = [[False] * N for _ in range(N)]
+def df(n, graph):
+    dist = [INF] * (n + 1)
+    dist[1] = 0  # 1번 노드를 시작점으로 설정
 
-complex_sizes = []
+    # N-1번 반복
+    for _ in range(n - 1):
+        for current_node in range(1, n + 1):
+            for nextValue, nextNode in graph[current_node]:
+                if dist[current_node] != INF and dist[nextNode] > dist[current_node] + nextValue:
+                    dist[nextNode] = dist[current_node] + nextValue
 
-for i in range(N):
-    for j in range(N):
-        if grid[i][j] == 1 and not visited[i][j]:
-            complex_size = dfs(i, j)
-            complex_sizes.append(complex_size)
+    # 음수 사이클 검사
+    for current_node in range(1, n + 1):
+        for nextValue, nextNode in graph[current_node]:
+            if dist[nextNode] > dist[current_node] + nextValue:
+                return True  # 음수 사이클 존재
 
-complex_sizes.sort()
-print(len(complex_sizes))
-for size in complex_sizes:
-    print(size)
+    return False
+
+for _ in range(T):
+    N, M, W = map(int, input().split())
+    graph = [[] for _ in range(N + 1)]  # 인접 리스트 초기화
+
+    # 도로 정보 입력
+    for _ in range(M):
+        S, E, T = map(int, input().split())
+        graph[S].append((T, E))  # 도로 (양방향)
+        graph[E].append((T, S))  # 도로 (양방향)
+
+    # 웜홀 정보 입력
+    for _ in range(W):
+        S, E, T = map(int, input().split())
+        graph[S].append((-T, E))  # 웜홀 (단방향)
+
+    # 음수 사이클 검사
+    if df(N, graph):
+        results.append("YES")
+    else:
+        results.append("NO")
+
+# 결과 출력
+print("\n".join(results))
