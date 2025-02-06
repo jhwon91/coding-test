@@ -1,17 +1,15 @@
 def solution(numbers, target):
-    answer = 0
-    global t ,num
-    t = target
-    num = numbers
+    
+    def dfs(index, total):
+        if len(numbers) == index:
+            if total == target:
+                return 1
+            else:
+                return 0
+        
+        return dfs(index+1, total - numbers[index]) + dfs(index+1, total + numbers[index])
     
     return dfs(0,0)
 
-def dfs(index,CNum):
-    if index == len(num):
-        return 1 if CNum == t else 0
-    
-    add_case = dfs(index + 1, CNum + num[index])
-    sub_case = dfs(index + 1, CNum - num[index])
-    
-    return add_case + sub_case
+
     
